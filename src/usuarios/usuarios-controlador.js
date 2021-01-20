@@ -4,13 +4,13 @@ const { InvalidArgumentError } = require('../erros');
 const tokens = require('./tokens');
 const { EmailVerificacao } = require('./emails');
 
-function geraEndereco(rota, token) {
+function geraEndereco (rota, token) {
   const baseURL = process.env.BASE_URL;
   return `${baseURL}${rota}${token}`
 }
 
 module.exports = {
-  async adiciona(req, res) {
+  async adiciona (req, res) {
     const { nome, email, senha, cargo } = req.body;
 
     try {
@@ -37,7 +37,7 @@ module.exports = {
     }
   },
 
-  async login(req, res) {
+  async login (req, res) {
     try {
       const acessToken = tokens.acess.cria(req.user.id);
       const refreshToken = await tokens.refresh.cria(req.user.id);
@@ -48,7 +48,7 @@ module.exports = {
     }
   },
 
-  async logout(req, res) {
+  async logout (req, res) {
     try {
       const token = req.token;
       await tokens.acess.invalida(token);
@@ -58,7 +58,7 @@ module.exports = {
     }
   },
 
-  async lista(req, res) {
+  async lista (req, res) {
     try {
       const usuarios = await Usuario.lista();
       res.json(usuarios);
@@ -67,17 +67,17 @@ module.exports = {
     }
   },
 
-  async verificaEmail(req, res) {
+  async verificaEmail (req, res) {
     try {
       const usuario = req.user;
       await usuario.verificaEmail();
       res.status(200).json();
     } catch (e) {
-      res.status(500).json({erro: e.message});
+      res.status(500).json({ erro: e.message });
     }
   },
 
-  async deleta(req, res) {
+  async deleta (req, res) {
     try {
       const usuario = await Usuario.buscaPorId(req.params.id);
       await usuario.deleta();
