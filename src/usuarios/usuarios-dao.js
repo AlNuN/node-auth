@@ -60,6 +60,17 @@ module.exports = {
     }
   },
 
+  async atualizarSenha (senha, id) {
+    try {
+      await dbRun(
+        `UPDATE usuarios SET senhaHash = ? WHERE id = ?`,
+        [senha, id]
+      );
+    } catch (e) {
+      throw new InternalServerError('Erro ao atualizar a senha do usuário.');
+    }
+  },
+
   async deleta(usuario) {
     try {
       await dbRun(`DELETE FROM usuarios WHERE id = ?`, [usuario.id]);

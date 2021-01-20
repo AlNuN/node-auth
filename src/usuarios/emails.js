@@ -14,7 +14,7 @@ const configuracaoEmailTeste = (contaTeste) => ({
   auth: contaTeste,
 });
 
-async function criaConfiguracaoEmail() {
+async function criaConfiguracaoEmail () {
   if (process.env.NODE_ENV === 'production')
     return configuracaoEmailProducao;
   const contaTeste = await nodemailer.createTestAccount();
@@ -22,7 +22,7 @@ async function criaConfiguracaoEmail() {
 }
 
 class Email {
-  async enviaEmail() {
+  async enviaEmail () {
     const configuracaoEmail = await criaConfiguracaoEmail();
     const transportador = nodemailer.createTransport(configuracaoEmail);
     const info = await transportador.sendMail(this);
@@ -32,7 +32,7 @@ class Email {
 }
 
 class EmailVerificacao extends Email {
-  constructor(usuario, endereco) {
+  constructor (usuario, endereco) {
     super();
     this.from = '"Blog do Código" <noreply@blogdocodigo.com.br>';
     this.to = usuario.email;
@@ -42,4 +42,15 @@ class EmailVerificacao extends Email {
   }
 }
 
-module.exports = { EmailVerificacao };
+class EmailRedefinicaoSenha extends Email {
+  constructor (usuario, endereco) {
+    super();
+    this.from = '"Blog do Código" <noreply@blogdocodigo.com.br>';
+    this.to = usuario.email;
+    this.subject = 'Redefinição de senha';
+    this.text = `Olá! Você pediu para redefinir sua senha. Use o endereço a seguir: ${endereco}`;
+    this.html = `<h1>Olá!</h1> Você pediu para redefinir sua senha. Use o endereço a seguir: <a href="${endereco}">${endereco}</a>`;
+  }
+}
+
+module.exports = { EmailVerificacao, EmailRedefinicaoSenha };

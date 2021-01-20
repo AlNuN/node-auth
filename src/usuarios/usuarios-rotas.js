@@ -4,6 +4,14 @@ const autorizacao = require('../middlewares/autorizacao');
 
 module.exports = (app) => {
   app
+    .route('/usuario/trocar_senha')
+    .post(usuariosControlador.trocarSenha);
+
+  app
+    .route('/usuario/esqueci_minha_senha')
+    .post(usuariosControlador.esqueciMinhaSenha);
+
+  app
     .route('/usuario/atualiza_token')
     .post(middlewaresAutenticacao.refresh, usuariosControlador.login);
 

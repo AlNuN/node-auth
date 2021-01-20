@@ -1,8 +1,9 @@
 const Usuario = require('./usuarios-modelo');
 
 const tokens = require('./tokens');
-const { EmailVerificacao } = require('./emails');
+const { EmailVerificacao, EmailRedefinicaoSenha } = require('./emails');
 const { ConversorUsuario } = require('../conversores');
+const { NaoEncontrado, InvalidArgumentError } = require('../erros');
 
 function geraEndereco (rota, token) {
   const baseURL = process.env.BASE_URL;
@@ -87,4 +88,41 @@ module.exports = {
       next(erro);
     }
   },
+
+  async esqueciMinhaSenha (req, res, next) {
+    const respostaPadrao = {
+      mensagem: 'Se encontrarmos um usuário com esse e-mail ' +
+      'vamos enviar uma mensagem com as instruções'
+    }
+    try {
+      const email = req.body.email;
+      const usuario = await Usuario.buscaPorEmail(email);
+      const token = await tokens.redefinicaoDeSenha.cria(usuario.id);
+      const emailRedefinicao = new EmailRedefinicaoSenha(usuario, token);
+      await emailRedefinicao.enviaEmail();
+
+      res.send(respostaPadrao);
+    } catch (erro) {
+      if (erro instanceof NaoEncontrado) {
+        res.send(respostaPadrao);
+        return;
+      }
+      next(erro);
+    }
+  },
+
+  async trocarSenha (req, res, next) {
+    const token = req.body.token;
+    try {
+      if (typeof token !== 'string' || token.length === 0)
+        throw new InvalidArgumentError('O token está inválido');
+      const id = await tokens.redefinicaoDeSenha.verifica(token);
+      const usuario = await Usuario.buscaPorId(id);
+      await usuario.adicionaSenha(req.body.senha);
+      await usuario.atualizarSenha();
+      res.send({ mensagem: 'Sua senha foi atualizada com sucesso' });
+    } catch (erro) {
+      next(erro);
+    }
+  }
 };
