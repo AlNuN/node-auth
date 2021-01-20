@@ -3,8 +3,15 @@ const { InvalidArgumentError, NaoEncontrado } = require('../erros');
 const validacoes = require('../validacoes-comuns');
 const bcrypt = require('bcrypt');
 
+/**
+ * Cria uma instância de usuário para manipulá-lo no banco de dados
+ */
 class Usuario {
-  constructor(usuario) {
+  /**
+   * Recebe um objeto com os atributos do usuário
+   * @param {object} usuario
+   */
+  constructor (usuario) {
     this.id = usuario.id;
     this.nome = usuario.nome;
     this.email = usuario.email;
@@ -14,6 +21,11 @@ class Usuario {
     this.valida();
   }
 
+  /**
+   * Adiciona um usuário ao banco
+   * @throws {InvalidArgumentError} quando um usuário com mesmo e-mail já está
+   * cadastrado no banco
+   */
   async adiciona () {
     if (await usuariosDao.buscaPorEmail(this.email))
       throw new InvalidArgumentError('O usuário já existe!');
