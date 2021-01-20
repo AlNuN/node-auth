@@ -10,14 +10,6 @@ const jwt = require('jsonwebtoken');
 const { InvalidArgumentError, NaoEncontrado, NaoAutorizado } = require('./src/erros');
 
 app.use((req, res, next) => {
-  const accept = req.getHeader('Accept');
-
-  if (accept.indexOf('application/json') === -1 || accept.indexOf('*/*') === -1) {
-    res.status(406);
-    res.end();
-    return;
-  }
-
   res.set({
     'Content-Type': 'application/json'
   });

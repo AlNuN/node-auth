@@ -1,6 +1,6 @@
 const Post = require('./posts-modelo');
 const { InvalidArgumentError } = require('../erros');
-const ConversorPost = require('../conversores');
+const { ConversorPost } = require('../conversores');
 
 module.exports = {
   async adiciona (req, res) {
@@ -20,7 +20,8 @@ module.exports = {
   async lista (req, res) {
     try {
       let posts = await Post.listarTodos();
-      const conversor = new ConversorPost('json');
+      const conversor = new ConversorPost('json',
+        req.acesso.todos.permitido ? req.acesso.todos.atributos : req.acesso.apenasSeu.atributos);
 
       if (!req.estaAutenticado) {
         posts = posts.map(post => {
