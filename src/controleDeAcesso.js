@@ -10,6 +10,7 @@ controle.grant('editor')
   .deleteOwn('post');
 
 controle.grant('admin')
+  .extend('assinante')
   .createAny('post')
   .deleteAny('post')
   .readAny('usuario')

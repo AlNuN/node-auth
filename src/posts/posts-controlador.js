@@ -44,8 +44,16 @@ module.exports = {
 
   async remover (req, res) {
     try {
-      const post = await Post.buscaPorId(req.params.id, req.user.id)
-      post.remover()
+      let post;
+
+      if (req.acesso.todos.permitido)
+        post = await Post.buscaPorId(req.params.id);
+      else if (req.acesso.apenasSeu.permitido)
+        post = await Post.buscaPorIdAutor(req.params.id, req.user.id);
+      else
+        throw new Error('Usuário não tem permissão para remover posts');
+
+      post.remover();
       res.status(204)
       res.end()
     } catch (erro) {
