@@ -16,9 +16,8 @@ class Post {
 
   static async buscaPorId (id, idAutor) {
     const post = await postsDao.buscaPorId(id, idAutor)
-    if (!post) {
-      return null
-    }
+    if (!post)
+      return null;
 
     return new Post(post)
   }

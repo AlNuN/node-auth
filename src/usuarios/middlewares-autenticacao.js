@@ -3,7 +3,7 @@ const Usuario = require('./usuarios-modelo');
 const tokens = require('./tokens');
 
 module.exports = {
-  local(req, res, next) {
+  local (req, res, next) {
     passport.authenticate(
       'local',
       { session: false },
@@ -21,12 +21,13 @@ module.exports = {
         }
 
         req.user = usuario;
+        req.estaAutenticado = true;
         return next();
       }
     )(req, res, next);
   },
 
-  bearer(req, res, next) {
+  bearer (req, res, next) {
     passport.authenticate(
       'bearer',
       { session: false },
@@ -51,6 +52,7 @@ module.exports = {
 
         req.token = info.token;
         req.user = usuario;
+        req.estaAutenticado = true;
         return next();
       }
     )(req, res, next);

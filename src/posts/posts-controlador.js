@@ -1,5 +1,5 @@
-const Post = require('./posts-modelo')
-const { InvalidArgumentError } = require('../erros')
+const Post = require('./posts-modelo');
+const { InvalidArgumentError } = require('../erros');
 
 module.exports = {
   async adiciona (req, res) {
@@ -10,16 +10,22 @@ module.exports = {
 
       res.status(201).json(post)
     } catch (erro) {
-      if (erro instanceof InvalidArgumentError) {
+      if (erro instanceof InvalidArgumentError)
         return res.status(400).json({ erro: erro.message })
-      }
       res.status(500).json({ erro: erro.message })
     }
   },
 
   async lista (req, res) {
     try {
-      const posts = await Post.listarPorAutor(req.user.id)
+      let posts = await Post.listarTodos();
+
+      if (!req.estaAutenticado) {
+        posts = posts.map(post => ({
+          titulo: post.titulo,
+          conteudo: post.conteudo
+        }))
+      }
 
       res.json(posts)
     } catch (erro) {
